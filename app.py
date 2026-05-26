@@ -4,9 +4,9 @@ from supabase import create_client
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="نظام قطع الغيار", layout="wide")
 
-# 2. إعداد الاتصال بـ Supabase (ضع مفاتيحك هنا)
+# 2. إعداد الاتصال بـ Supabase (https://kvehcxtccbfqofrhbmht.supabase.co
 SUPABASE_URL = "https://kvehcxtccbfqofrhbmht.supabase.co"
-SUPABASE_KEY = "ضع_المفتاح_الخاص_بك_هنا" 
+SUPABASE_KEY = "sb_publishable_nSn2mLEBLr08eFTUMjXxaA_LkN6xSA9" 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # 3. إدارة الجلسة (Session State)
