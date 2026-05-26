@@ -19,49 +19,145 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-.main {
-    background-color: #0f172a;
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Cairo', sans-serif;
 }
 
 .stApp {
-    background-color: #0f172a;
+    background: linear-gradient(135deg,#020617,#0f172a,#111827);
     color: white;
 }
 
+.main {
+    background: transparent;
+}
+
 section[data-testid="stSidebar"] {
-    background-color: #111827;
+    background: linear-gradient(180deg,#020617,#111827);
+    border-left: 1px solid rgba(255,255,255,0.08);
 }
 
 .sidebar-title {
     color: white;
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 28px;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.logo-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 18px;
+    border-radius: 20px;
     text-align: center;
     margin-bottom: 20px;
 }
 
+.logo-box h2 {
+    color: #38bdf8;
+    margin: 0;
+}
+
 .card {
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 15px;
+    background: rgba(15,23,42,0.75);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    padding: 25px;
+    border-radius: 22px;
     color: white;
     text-align: center;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border: 1px solid rgba(56,189,248,0.4);
 }
 
 .card-title {
     font-size: 18px;
     color: #cbd5e1;
+    margin-bottom: 10px;
 }
 
 .card-value {
-    font-size: 32px;
+    font-size: 38px;
     font-weight: bold;
     color: #38bdf8;
 }
 
-h1,h2,h3,h4 {
+.dashboard-header {
+    background: linear-gradient(135deg,#0f172a,#1e293b);
+    padding: 30px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 25px;
+}
+
+.dashboard-header h1 {
     color: white;
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.dashboard-header p {
+    color: #cbd5e1;
+    font-size: 18px;
+}
+
+.stButton>button {
+    background: linear-gradient(135deg,#0284c7,#38bdf8);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-size: 16px;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.stButton>button:hover {
+    transform: scale(1.03);
+    background: linear-gradient(135deg,#0ea5e9,#7dd3fc);
+}
+
+.stTextInput input,
+.stNumberInput input,
+textarea {
+    background-color: rgba(255,255,255,0.05) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+.stSelectbox div[data-baseweb="select"] {
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 12px;
+}
+
+div[data-testid="metric-container"] {
+    background: rgba(15,23,42,0.75);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 15px;
+    border-radius: 20px;
+}
+
+[data-testid="stDataFrame"] {
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+h1,h2,h3,h4,h5 {
+    color: white !important;
+}
+
+hr {
+    border-color: rgba(255,255,255,0.08);
 }
 
 </style>
@@ -81,7 +177,12 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 # ==========================================
 
 st.sidebar.markdown(
-    "<div class='sidebar-title'>🚗 نظام الرويعي الذكي</div>",
+    """
+    <div class='logo-box'>
+        <h2>🚗 نظام الرويعي الذكي</h2>
+        <p style='color:#cbd5e1;'>إدارة قطع غيار السيارات الصينية</p>
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
@@ -106,7 +207,12 @@ menu = st.sidebar.radio(
 
 if menu == "لوحة التحكم":
 
-    st.title("📊 لوحة التحكم الرئيسية")
+    st.markdown("""
+    <div class='dashboard-header'>
+        <h1>📊 لوحة التحكم الرئيسية</h1>
+        <p>نظام ذكي لإدارة المبيعات والمخزون والبحث بالشاصي وربط الكتالوجات الأصلية</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     try:
 
@@ -120,7 +226,7 @@ if menu == "لوحة التحكم":
         with col1:
             st.markdown(f"""
             <div class='card'>
-                <div class='card-title'>الأصناف</div>
+                <div class='card-title'>📦 الأصناف</div>
                 <div class='card-value'>{parts_count.count}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -128,7 +234,7 @@ if menu == "لوحة التحكم":
         with col2:
             st.markdown(f"""
             <div class='card'>
-                <div class='card-title'>العملاء</div>
+                <div class='card-title'>👥 العملاء</div>
                 <div class='card-value'>{customers_count.count}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -136,7 +242,7 @@ if menu == "لوحة التحكم":
         with col3:
             st.markdown(f"""
             <div class='card'>
-                <div class='card-title'>المبيعات</div>
+                <div class='card-title'>💰 المبيعات</div>
                 <div class='card-value'>{sales_count.count}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -144,13 +250,30 @@ if menu == "لوحة التحكم":
         with col4:
             st.markdown(f"""
             <div class='card'>
-                <div class='card-title'>الطلبات</div>
+                <div class='card-title'>📋 الطلبات</div>
                 <div class='card-value'>{orders_count.count}</div>
             </div>
             """, unsafe_allow_html=True)
 
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        left, right = st.columns([2,1])
+
+        with left:
+            st.subheader("📈 حركة النظام")
+            chart_data = pd.DataFrame({
+                'المبيعات':[15,22,18,30,27,35,40]
+            })
+            st.line_chart(chart_data)
+
+        with right:
+            st.subheader("⚡ مؤشرات سريعة")
+            st.metric("مبيعات اليوم", "12,500 ريال")
+            st.metric("طلبات الورش", "28 طلب")
+            st.metric("قطع ناقصة", "14 قطعة")
+
     except Exception as e:
-        st.error(e)
+        st.error(f"خطأ في الاتصال بقاعدة البيانات: {e}")
 
 # ==========================================
 # VIN SEARCH
