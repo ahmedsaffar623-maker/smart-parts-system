@@ -1,90 +1,41 @@
 import streamlit as st
 from supabase import create_client
 
-# 1. إعدادات الصفحة
-st.set_page_config(page_title="نظام قطع الغيار الذكي", layout="wide")
-
-# 2. إعداد الاتصال بـ Supabase (تأكد من وضع المفتاح الصحيح هنا)
+# 1. إعدادات الاتصال
 SUPABASE_URL = "https://kvehcxtccbfqofrhbmht.supabase.co"
-SUPABASE_KEY = "sb_publishable_nSn2mLEBLr08eFTUMjXxaA_LkN6xSA9" 
+SUPABASE_KEY = "sb_publishable_nSn2mLEBLr08eFTUMjXxaA_LkN6xSA9"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# 3. إدارة الجلسة (Session State)
+# 2. إدارة الجلسة
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 
-# 4. واجهة تسجيل الدخول
+# 3. واجهة الدخول
 if not st.session_state.logged_in:
-    st.title("🔐 تسجيل الدخول إلى النظام")
-    username = st.text_input("اسم المستخدم")
-    password = st.text_input("كلمة المرور", type="password")
-    
+    st.title("🔐 تسجيل الدخول")
+    user = st.text_input("اسم المستخدم")
+    pw = st.text_input("كلمة المرور", type="password")
     if st.button("دخول"):
-        if username == "admin" and password == "123":
+        if user == "admin" and pw == "123":
             st.session_state.logged_in = True
             st.rerun()
         else:
-            st.error("اسم المستخدم أو كلمة المرور غير صحيحة")
+            st.error("بيانات الدخول خاطئة")
 else:
-    # 5. لوحة التحكم (تظهر بعد الدخول)
-    st.sidebar.title("خيارات النظام")
-    if st.sidebar.button("تسجيل خروج"):
-        st.session_state.logged_in = False
-        st.rerun()
-        
+    # 4. لوحة التحكم
+    st.sidebar.button("تسجيل خروج", on_click=lambda: st.session_state.update(logged_in=False) or st.rerun())
     st.title("📦 لوحة تحكم قطع الغيار")
     
-    # نموذج إضافة قطعة جديدة
-    with st.form("add_part"):
-        st.subheader("إضافة قطعة جديدة")
-        name = st.text_input("اسم القطعة")
-        qty = st.number_input("الكمية", min_value=0, step=1)
-        submit = st.form_submit_button("حفظ في قاعدة البيانات")
-        
-        if submit:
-            if name:
-                # إرسال البيانات لـ Supabase
-                try:
-                    supabase.table("parts").insert({"name": name, "quantity": qty}).execute()
-                    st.success(f"تم حفظ {name} بنجاح!")
-                except Exception as e:
-                    st.error(f"حدث خطأ أثناء الحفظ: {e}")
-            else:
-                st.warning("يرجى كتابة اسم القطعة")
+    # إضافة قطعة
+    name = st.text_input("اسم القطعة")
+    qty = st.number_input("الكمية", min_value=0)
+    if st.button("إضافة"):
+        # تعديل ليتوافق مع النسخة الجديدة من supabase
+        supabase.table("parts").insert({"name": name, "quantity": qty}).execute()
+        st.success("تمت الإضافة!")
+        st.rerun()
 
-    # عرض البيانات من Supabase
-    st.subheader("📋 قائمة قطع الغيار الحالية:")
-    try:
-        response = supabase.table("parts").select("*").execute()
-        data = response.data
-        
-        if data:
-            st.table(data)
-        else:
-            st.info("لا توجد بيانات حالياً.")
-    except Exception as e:
-        st.error(f"تعذر جلب البيانات: {e}")
-    # نموذج إضافة قطعة
-    with st.form("add_part"):
-        st.subheader("إضافة قطعة جديدة")
-        name = st.text_input("اسم القطعة")
-        qty = st.number_input("الكمية", min_value=0, step=1)
-        submit = st.form_submit_button("حفظ في قاعدة البيانات")
-        
-        if submit:
-            if name:
-                # إرسال البيانات لـ Supabase
-                supabase.table("parts").insert({"name": name, "quantity": qty}).execute()
-                st.success(f"تم حفظ {name} بنجاح!")
-            else:
-                st.warning("يرجى كتابة اسم القطعة")
-
-    # عرض البيانات من Supabase
-    st.subheader("📋 قائمة قطع الغيار الحالية:")
+    # عرض البيانات
+    st.subheader("📋 القائمة:")
     response = supabase.table("parts").select("*").execute()
-    data = response.data
-    
-    if data:
-        st.table(data)
-    else:
-        st.info("لا توجد بيانات حالياً.")
+    st.table(response.data)
