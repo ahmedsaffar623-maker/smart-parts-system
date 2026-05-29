@@ -147,6 +147,118 @@ def get_compatible_parts(vin):
 # ==========================================
 # صفحة البحث بالـ VIN
 # ==========================================
+# ==========================================
+# لوحة التحكم
+# ==========================================
+
+if menu == "لوحة التحكم":
+
+    st.title("📊 لوحة التحكم الذكية")
+
+    # ======================================
+    # إحصائيات عامة
+    # ======================================
+
+    total_parts = supabase.table(
+        "parts"
+    ).select(
+        "*",
+        count="exact"
+    ).execute()
+
+    total_vins = supabase.table(
+        "vin_parts"
+    ).select(
+        "*",
+        count="exact"
+    ).execute()
+
+    total_suppliers = supabase.table(
+        "suppliers"
+    ).select(
+        "*",
+        count="exact"
+    ).execute()
+
+    low_stock = supabase.table(
+        "parts"
+    ).select(
+        "*",
+        count="exact"
+    ).lte(
+        "current_stock",
+        5
+    ).execute()
+
+    # ======================================
+    # البطاقات
+    # ======================================
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+
+        st.metric(
+            "📦 إجمالي القطع",
+            total_parts.count
+        )
+
+    with col2:
+
+        st.metric(
+            "🚗 عدد VIN",
+            total_vins.count
+        )
+
+    with col3:
+
+        st.metric(
+            "🏢 الموردين",
+            total_suppliers.count
+        )
+
+    with col4:
+
+        st.metric(
+            "⚠️ قطع منخفضة المخزون",
+            low_stock.count
+        )
+
+    st.divider()
+
+    # ======================================
+    # القطع منخفضة المخزون
+    # ======================================
+
+    st.subheader("⚠️ القطع منخفضة المخزون")
+
+    low_stock_parts = supabase.table(
+        "parts"
+    ).select(
+        "part_number, part_name, current_stock"
+    ).lte(
+        "current_stock",
+        5
+    ).limit(20).execute()
+
+    if low_stock_parts.data:
+
+        df = pd.DataFrame(
+            low_stock_parts.data
+        )
+
+        st.dataframe(
+            df,
+            use_container_width=True
+        )
+
+    else:
+
+        st.success(
+            "لا توجد قطع منخفضة المخزون"
+        )
+
+
 st.sidebar.title("🚗 نظام الرويعي الذكي")
 
 menu = st.sidebar.radio(
