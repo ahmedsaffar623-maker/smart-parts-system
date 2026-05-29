@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # ==========================================
 
 st.set_page_config(
-    page_title="Ruwaiei Smart Parts",
+    page_title="Smart Parts to search by VIN",
     page_icon="🚗",
     layout="wide"
 )
